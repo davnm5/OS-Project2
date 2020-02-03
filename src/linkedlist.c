@@ -45,11 +45,12 @@ void display(List *list)
     Node *current = list->head;
     if (list->head == NULL)
         return;
-
+    printf("\nFinal List: => [");
     for (; current != NULL; current = current->next)
     {
-        printf("%d\n", current->data);
+        printf("%d,", current->data);
     }
+    printf("]\n");
 }
 
 void insert(int data, List *list)

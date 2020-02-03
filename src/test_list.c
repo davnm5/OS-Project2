@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/list.h"
-#define MAX 100
+#define MAX 500
 
 char linea1[MAX], linea2[MAX], linea3[MAX], linea4[MAX], linea5[MAX];
 char *insert_values, *delete_values, *search_values, *update_values_old, *update_values_new;
@@ -34,6 +34,7 @@ int separar(char *linea, int n)
 
   if (n == 0)
     list_insert = lista;
+
   if (n == 1)
     list_delete = lista;
   if (n == 2)
@@ -63,14 +64,24 @@ void leer_archivo(char *name)
   archivo = fopen(name, "r");
   fgets(linea1, MAX, archivo);
   insert_values = tokenizar(linea1, "=");
+  insert_values[strlen(insert_values) - 1] = '\0';
+  printf("\nInsert values: => [%s]\n", insert_values);
   fgets(linea2, MAX, archivo);
   delete_values = tokenizar(linea2, "=");
+  delete_values[strlen(delete_values) - 1] = '\0';
+  printf("\nDelete values: => [%s]\n", delete_values);
   fgets(linea3, MAX, archivo);
   search_values = tokenizar(linea3, "=");
+  search_values[strlen(search_values) - 1] = '\0';
+  printf("\nSearch values: => [%s]\n", search_values);
   fgets(linea4, MAX, archivo);
   update_values_old = tokenizar(linea4, "=");
+  update_values_old[strlen(update_values_old) - 1] = '\0';
+  printf("\n   Values old: => [%s]\n", update_values_old);
   fgets(linea5, MAX, archivo);
   update_values_new = tokenizar(linea5, "=");
+  update_values_new[strlen(update_values_new) - 1] = '\0';
+  printf("\n   Values new: => [%s]\n\nResult:\n\n", update_values_new);
   fclose(archivo);
 }
 
@@ -94,18 +105,18 @@ int main(int argc, char *argv[])
       delete (list_delete[i], list);
     }
 
+    int x4 = separar(search_values, 2);
+    for (int i = 0; i < x4; i++)
+    {
+      search(list_search[i], list);
+    }
+
     int x3 = separar(update_values_old, 3);
     separar(update_values_new, 4);
 
     for (int i = 0; i < x3; i++)
     {
       update(list_update_old[i], list_update_new[i], list);
-    }
-
-    int x4 = separar(search_values, 2);
-    for (int i = 0; i < x4; i++)
-    {
-    search(list_search[i], list);
     }
 
     display(list);
