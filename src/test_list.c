@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
   }
   else
   {
-    printf("Uso:: ./prs [ARCHIVO_CFG]\n");
+    printf("Uso:: ./prs [ARCHIVO_TEST.TXT]\n");
   }
 
   return 0;
