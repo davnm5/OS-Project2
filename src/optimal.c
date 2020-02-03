@@ -7,7 +7,6 @@ int faults ,hits;
 void print_optimal(int frame_size,int frame[])
 {
 	int i;
-	//printf("Printing the Frames: ");
 	for(i=0;i<frame_size;i++)
 	{
 		if(frame[i]==-1)
