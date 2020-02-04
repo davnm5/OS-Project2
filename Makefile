@@ -12,6 +12,6 @@ prs: src/main.c
 test_list:
 	gcc -static -c src/linkedlist.c -o obj/list.o
 	ar -rcs lib/liblist.a obj/list.o
-	gcc src/test_list.c -o bin/test_list -Llib -llist
+	gcc src/test_list.c -o bin/test_list -Llib -llist -pthread
 clean:
 	rm -rf obj/* bin/* lib/*
