@@ -5,23 +5,23 @@
 #include <semaphore.h>
 #include "../include/list.h"
 #define MAX 500
-#define NTHREADS 3
+#define NTHREADS 4
 
 typedef struct estructuraTDA
 {
-  int indice;
-  int size;
+  int indice,indice2;
+  int size,size2;
 } estructura;
 
-sem_t sem1, sem2, sem3;
+sem_t sem1, sem2, sem3,sem4;
 char linea1[MAX], linea2[MAX], linea3[MAX], linea4[MAX], linea5[MAX];
 char *insert_values, *delete_values, *search_values, *update_values_old, *update_values_new;
-int list_insert[MAX], list_update[MAX],list_delete[MAX], list_search[MAX], *list_update_old, *list_update_new, lista_aux[MAX] = {0},lista[MAX] = {0};
+int list_insert[MAX], list_update[MAX],list_delete[MAX], list_search[MAX],list_update_old[MAX], list_update_new[MAX], lista_aux[MAX] = {0},lista[MAX] = {0};
 char *tokenizar(char linea[], char *token);
 List *list;
-int array_size[4];
+int array_size[5];
 int separar(char *linea, int n);
-void asignar(int *x,int contador);
+void asignar(int *x,int contador,int n);
 int separar(char *linea, int n)
 {
   char *cadena;
@@ -44,22 +44,26 @@ int separar(char *linea, int n)
   }
 
   if (n == 0)
-    asignar(list_insert,contador);
+    asignar(list_insert,contador,0);
   if (n == 1)
-    asignar(list_delete,contador);
+    asignar(list_delete,contador,0);
   if (n == 2)
-    asignar(list_search,contador);
+    asignar(list_search,contador,0);
   if (n == 3)
-    asignar(list_update_old,contador);
+    asignar(list_update_old,contador,1);
   if (n == 4)
-    asignar(list_update_new,contador);
+    asignar(list_update_new,contador,0);
 
   return contador;
 }
 
-void asignar(int* x,int contador){
+void asignar(int* x,int contador,int n){
   for(int i=0;i<contador;i++){
     x[i]=lista[i];
+    if(n==1){
+      x[i]=lista_aux[i];
+    }
+    
   }
 }
 
@@ -82,8 +86,8 @@ void *controlador(void *arg)
     for (int i = 0; i < argumento->size; i++)
     {
       insert(list_insert[i], list);
-       printf("insert: %d \n", list_insert[i]);
-      sem_post(&sem2);
+       printf("Insert: %d \n", list_insert[i]);
+      sem_post(&sem1);
     }
     
   }
@@ -93,10 +97,10 @@ void *controlador(void *arg)
     
     for (int i = 0; i < argumento->size; i++)
     {
-      sem_wait(&sem2);
+      sem_wait(&sem1);
       delete (list_delete[i], list);
-      printf("delete: %d \n", list_delete[i]);
-      sem_post(&sem3);
+      printf("Delete: %d \n", list_delete[i]);
+      sem_post(&sem2);
     }
     
   }
@@ -106,27 +110,36 @@ void *controlador(void *arg)
     
     for (int i = 0; i < argumento->size; i++)
     {
-      sem_wait(&sem3);
+      sem_wait(&sem2);
+      printf("Search: %d \n", list_search[i]);
       search(list_search[i], list);
-      printf("search: %d \n", list_search[i]);
       sem_post(&sem3);
     }
     
   }
+
+  if (argumento->indice == 3)
+  {
+    
+    for (int i = 0; i < argumento->size; i++)
+    {
+      sem_wait(&sem3);
+      update(list_update_old[i],list_update_new[i],list);
+      sem_post(&sem4);
+    }
+    
+  }
+
   free(argumento);
   return (void *)0;
 }
 
-/*
-Método que se encarga de asignar a cada estructura de los hilos un inicio y fin del bloque a procesar.
-*/
+
 void crear_hilos()
 {
 
   int status;
   
-  /*array_size[3] = separar(update_values_old, 3);
-  array_size[4] = separar(update_values_new, 4);*/
 
   pthread_t *hilos = malloc(NTHREADS * sizeof(pthread_t));
   for (int i = 0; i < NTHREADS; i++)
@@ -141,10 +154,17 @@ void crear_hilos()
     if(i==2){
       array_size[i] = separar(search_values, i);
     }
+
+    if(i==3){
+      array_size[i] = separar(update_values_old,i);
+      separar(update_values_new,i+1);
+      argumento->indice2 = i+1;
+      argumento->size2 = array_size[i];
+    }
     
     argumento->indice = i;
     argumento->size = array_size[i];
-    //printf("indice: %d\n", argumento->indice);
+
     status = pthread_create(&hilos[i], NULL, controlador, (void *)argumento);
     if (status < 0)
     {
@@ -201,33 +221,6 @@ int main(int argc, char *argv[])
 
     list = makelist();
     crear_hilos();
-    /*int x1 = separar(insert_values, 0);
-
-    for (int i = 0; i < x1; i++)
-    {
-      insert(list_insert[i], list);
-    }*/
-    /*
-    int x2 = separar(delete_values, 1);
-    for (int i = 0; i < x2; i++)
-    {
-      delete (list_delete[i], list);
-    }
-
-    int x4 = separar(search_values, 2);
-    for (int i = 0; i < x4; i++)
-    {
-      search(list_search[i], list);
-    }
-
-    int x3 = separar(update_values_old, 3);
-    separar(update_values_new, 4);
-
-    for (int i = 0; i < x3; i++)
-    {
-      update(list_update_old[i], list_update_new[i], list);
-    }
-*/
     display(list);
     destroy(list);
   }
