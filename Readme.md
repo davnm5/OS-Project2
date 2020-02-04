@@ -81,7 +81,7 @@ Se decidió utilizar 4 hilos, los cuales accederán a la lista y se encargarán 
 * Se realizan todas las conversiones de unidades, y se muestra una tabla que refleja la secuencia que siguió el algoritmo de remplazo de página.
 
 > **Problema de concurrencia**
-* Se usan dos semáforos para manejar las regiones críticas del programa.
+* Se usan cuatro semáforos para manejar las regiones críticas del programa.
 * Se utiliza asignación de memoria dinámica para hilos,buffer y estructuras, luego dicha memoria reservada es liberada cuando ya no se necesita, con la finalidad de evitar fugas de memoria.
 * Se muestran todas las operaciones realizadas a la lista, y una lista final con los elementos resultantes.
 
