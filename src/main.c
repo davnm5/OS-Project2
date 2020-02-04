@@ -1,3 +1,9 @@
+/* Author : David Neira Martrus
+   Date: 03/02/2020
+   Project 2
+   Teacher: Ángel López Aguirre
+*/
+
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -29,7 +35,7 @@ void removeSubstr(char *string, char *sub);
 void calcular();
 void crear_string();
 
-void leer_configuracion(char *name)
+void leer_configuracion(char *name)         /*Se lee la configuracion del archivo*/
 {
     FILE *archivo;
     archivo = fopen(name, "r");
@@ -59,7 +65,7 @@ void leer_configuracion(char *name)
     fclose(archivo);
 }
 
-char *tokenizar(char linea[], char *token)
+char *tokenizar(char linea[], char *token)      /*Se separan las lineas del archivo por el token recibido*/
 {
     strtok(linea,"\n");
     char *cadena = strtok(linea, token);
@@ -70,7 +76,7 @@ char *tokenizar(char linea[], char *token)
     }
 }
 
-int obtener_numero(char *valor)
+int obtener_numero(char *valor)    /*Función que devuelve la parte numérica de la cadena*/
 {
     char aux[MAX];
     int aux_int = 0;
@@ -84,7 +90,7 @@ int obtener_numero(char *valor)
     return aux_int;
 }
 
-int buscar_potencia(int numero, char *valor)
+int buscar_potencia(int numero, char *valor)   /*función que devuelve la potencia adecuada y además realiza la conversión de unidades*/
 {
     int contador = 0;
     char aux[MAX];

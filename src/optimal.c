@@ -1,3 +1,10 @@
+/* Author : David Neira Martrus
+   Date: 03/02/2020
+   Project 2
+   Teacher: Ángel López Aguirre
+*/
+
+
 #include"../include/optimal.h"
 #ifndef _OPTIMAL_C
 #define _OPTIMAL_C

@@ -1,3 +1,9 @@
+/* Author : David Neira Martrus
+   Date: 03/02/2020
+   Project 2
+   Teacher: Ángel López Aguirre
+*/
+
 #include"../include/lru.h"
 #ifndef _LRU_C
 #define _LRU_C

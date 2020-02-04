@@ -1,3 +1,9 @@
+/* Author : David Neira Martrus
+   Date: 03/02/2020
+   Project 2
+   Teacher: Ángel López Aguirre
+*/
+
 #include"../include/fifo.h"
 #ifndef _FIFO_C
 #define _FIFO_C

@@ -1,3 +1,9 @@
+/* Author : David Neira Martrus
+   Date: 03/02/2020
+   Project 2
+   Teacher: Ángel López Aguirre
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,19 +15,19 @@
 
 typedef struct estructuraTDA
 {
-  int indice,indice2;
-  int size,size2;
+  int indice, indice2;
+  int size, size2;
 } estructura;
 
-sem_t sem1, sem2, sem3,sem4;
+sem_t sem1, sem2, sem3, sem4;
 char linea1[MAX], linea2[MAX], linea3[MAX], linea4[MAX], linea5[MAX];
 char *insert_values, *delete_values, *search_values, *update_values_old, *update_values_new;
-int list_insert[MAX], list_update[MAX],list_delete[MAX], list_search[MAX],list_update_old[MAX], list_update_new[MAX], lista_aux[MAX] = {0},lista[MAX] = {0};
+int list_insert[MAX], list_update[MAX], list_delete[MAX], list_search[MAX], list_update_old[MAX], list_update_new[MAX], lista_aux[MAX] = {0}, lista[MAX] = {0};
 char *tokenizar(char linea[], char *token);
 List *list;
 int array_size[5];
 int separar(char *linea, int n);
-void asignar(int *x,int contador,int n);
+void asignar(int *x, int contador, int n);
 int separar(char *linea, int n)
 {
   char *cadena;
@@ -44,30 +50,32 @@ int separar(char *linea, int n)
   }
 
   if (n == 0)
-    asignar(list_insert,contador,0);
+    asignar(list_insert, contador, 0);
   if (n == 1)
-    asignar(list_delete,contador,0);
+    asignar(list_delete, contador, 0);
   if (n == 2)
-    asignar(list_search,contador,0);
+    asignar(list_search, contador, 0);
   if (n == 3)
-    asignar(list_update_old,contador,1);
+    asignar(list_update_old, contador, 1);
   if (n == 4)
-    asignar(list_update_new,contador,0);
+    asignar(list_update_new, contador, 0);
 
   return contador;
 }
 
-void asignar(int* x,int contador,int n){
-  for(int i=0;i<contador;i++){
-    x[i]=lista[i];
-    if(n==1){
-      x[i]=lista_aux[i];
+void asignar(int *x, int contador, int n)     /*Se asignan los números al array de cada operación*/
+{
+  for (int i = 0; i < contador; i++)
+  {
+    x[i] = lista[i];
+    if (n == 1)
+    {
+      x[i] = lista_aux[i];
     }
-    
   }
 }
 
-char *tokenizar(char linea[], char *token)
+char *tokenizar(char linea[], char *token)    /*Se separan las lineas del archivo por el token recibido*/
 {
   strtok(linea, "\n");
   char *cadena = strtok(linea, token);
@@ -78,7 +86,7 @@ char *tokenizar(char linea[], char *token)
   }
 }
 
-void *controlador(void *arg)
+void *controlador(void *arg)                     /*Función a la que acceden los hilos y realizarán las operaciones de forma sincronizada*/
 {
   estructura *argumento = (estructura *)arg;
   if (argumento->indice == 0)
@@ -86,15 +94,14 @@ void *controlador(void *arg)
     for (int i = 0; i < argumento->size; i++)
     {
       insert(list_insert[i], list);
-       printf("Insert: %d \n", list_insert[i]);
+      printf("Insert: %d \n", list_insert[i]);
       sem_post(&sem1);
     }
-    
   }
 
   if (argumento->indice == 1)
   {
-    
+
     for (int i = 0; i < argumento->size; i++)
     {
       sem_wait(&sem1);
@@ -102,12 +109,11 @@ void *controlador(void *arg)
       printf("Delete: %d \n", list_delete[i]);
       sem_post(&sem2);
     }
-    
   }
 
   if (argumento->indice == 2)
   {
-    
+
     for (int i = 0; i < argumento->size; i++)
     {
       sem_wait(&sem2);
@@ -115,53 +121,53 @@ void *controlador(void *arg)
       search(list_search[i], list);
       sem_post(&sem3);
     }
-    
   }
 
   if (argumento->indice == 3)
   {
-    
+
     for (int i = 0; i < argumento->size; i++)
     {
       sem_wait(&sem3);
-      update(list_update_old[i],list_update_new[i],list);
+      update(list_update_old[i], list_update_new[i], list);
       sem_post(&sem4);
     }
-    
   }
 
   free(argumento);
   return (void *)0;
 }
 
-
-void crear_hilos()
+void crear_hilos()  /*Se crean los 4 hilos utilizados*/
 {
 
   int status;
-  
 
   pthread_t *hilos = malloc(NTHREADS * sizeof(pthread_t));
   for (int i = 0; i < NTHREADS; i++)
   {
     estructura *argumento = malloc(sizeof(estructura));
-    if(i==0){
+    if (i == 0)
+    {
       array_size[i] = separar(insert_values, i);
     }
-    if(i==1){
+    if (i == 1)
+    {
       array_size[i] = separar(delete_values, i);
     }
-    if(i==2){
+    if (i == 2)
+    {
       array_size[i] = separar(search_values, i);
     }
 
-    if(i==3){
-      array_size[i] = separar(update_values_old,i);
-      separar(update_values_new,i+1);
-      argumento->indice2 = i+1;
+    if (i == 3)
+    {
+      array_size[i] = separar(update_values_old, i);
+      separar(update_values_new, i + 1);
+      argumento->indice2 = i + 1;
       argumento->size2 = array_size[i];
     }
-    
+
     argumento->indice = i;
     argumento->size = array_size[i];
 
@@ -189,7 +195,7 @@ void crear_hilos()
 void leer_archivo(char *name)
 {
   FILE *archivo;
-  archivo = fopen(name, "r");
+  archivo = fopen(name, "r"); /*Se lee la configuracion del archivo*/
   fgets(linea1, MAX, archivo);
   insert_values = tokenizar(linea1, "=");
   insert_values[strlen(insert_values) - 1] = '\0';
@@ -221,8 +227,8 @@ int main(int argc, char *argv[])
 
     list = makelist();
     crear_hilos();
-    display(list);
-    destroy(list);
+    display(list);//muestra la lista
+    destroy(list);//destruye la lista
   }
   else
   {

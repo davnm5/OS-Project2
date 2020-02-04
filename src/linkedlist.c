@@ -1,3 +1,9 @@
+/* Author : David Neira Martrus
+   Date: 03/02/2020
+   Project 2
+   Teacher: Ángel López Aguirre
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/list.h"
