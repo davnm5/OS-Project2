@@ -54,14 +54,19 @@ Se generarán los ejecutables **prs** y **test_list** en el directorio **/bin**
 ./bin/prs <conf.cfg>
 
 ```
-![Nuevo Shell](images/imagen1.png)
+![simulador](images/imagen1.png)
 * **Problema de concurrencia**
 
 ```
 ./bin/test_list <test/test.txt>
 
 ```
-![Comando twc](images/imagen2.png)
+**Operaciones del archivo**
+![list](images/imagen2.png)
+
+
+**Resultado de las operaciones**
+![list_final](images/imagen3.png)
 
 **NOTA:** Para realizar el proyecto se usaron 4 librerías estáticas, 3 de ellas son algoritmos de remplazo de página y la restante corresponde a la lista enlazada.
 
@@ -69,8 +74,6 @@ Se generarán los ejecutables **prs** y **test_list** en el directorio **/bin**
 ---------------
 La estrategia utilizada para resolver el segundo problema planteado consiste en utilizar hilos para que accedan a la lista de forma simultánea, el propósito es poder maximizar el uso de los recursos disponibles.
 Se decidió utilizar 4 hilos, los cuales accederán a la lista y se encargarán de manejar una sola operación, es decir, el primer hilo realizará operaciones de insertar y así sucesivamente. Se utilizan semáforos en las regiones críticas para resolver las condiciones de carrera, en este caso,la lista es el recurso compartido y sin el uso de un método para sincronización los valores variarán en cada ejecución. Para resolver el problema se hizo uso de semáforos,de esta forma las operaciones se realizarán en un orden adecuado y se evitará conflictos entre hilos que tratan de acceder a una misma posición de la lista para realizar una operación.
-
-![Diagrama](images/imagen3.png)
 
 5.- Problemas y funcionalidades extras
 ---------------
